@@ -2,7 +2,7 @@
 
 ## Introduction
 
-From the TaskPaper website (<http://hogbaysoftware.com/projects/taskpaper>):
+From the TaskPaper website (<https://www.taskpaper.com>):
 
 "TaskPaper is a simple to-do list application that helps you stay
 organized. Unlike competing applications, TaskPaper is based on plain text
