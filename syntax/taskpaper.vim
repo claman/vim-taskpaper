@@ -1,8 +1,8 @@
 " Vim syntax file
-" Language:	Taskpaper (http://hogbaysoftware.com/projects/taskpaper)
-" Maintainer:	David O'Callaghan <david.ocallaghan@cs.tcd.ie>
-" URL:		https://github.com/davidoc/taskpaper.vim
-" Last Change:  2012-03-07
+" Language:	Taskpaper (https://www.taskpaper.com)
+" Maintainer:	Alex Claman
+" URL:		https://github.com/claman/vim-taskpaper
+" Last Change:  2023-02-22
 
 if exists('b:current_syntax')
   finish
