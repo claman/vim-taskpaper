@@ -2,10 +2,18 @@
 " Language:	Taskpaper (https://www.taskpaper.com)
 " Maintainer:	Alex Claman
 " URL:		https://github.com/claman/vim-taskpaper
-" Last Change:  2023-02-22
+" Last Change:  2023-03-11
 
-if exists('b:current_syntax')
+if version < 600
+  syntax clear
+elseif exists("b:current_syntax")
   finish
+endif
+
+if version < 508
+  command! -nargs=+ HiLink hi link <args>
+else
+  command! -nargs=+ HiLink hi def link <args>
 endif
 
 " Define tag styles
@@ -15,24 +23,30 @@ endif
 
 syn case ignore
 
-syn match TaskPaperNote         /^.*$/ contains=TaskPaperURL
-syn match TaskPaperProject      /^.\+:\(\s\+@[^ \t(]\+\(([^)]*)\)\?\)*$/ contains=taskpaperContext
-syn match TaskPaperListItem     /^\t*-\s\+/ contains=TaskPaperURL
-syn match TaskPaperToday        /@due(today)/
-syn match TaskPaperDone         /^.*\s@done\(\(\s\|([^)]*)\).*\)\?$/
+syn match taskpaperComment   /^.*$/ contains=taskpaperContext
+syn match taskpaperProject   /^.\+:\(\s\+@[^ \t(]\+\(([^)]*)\)\?\)*$/ contains=taskpaperContext
+syn match taskpaperListItem  /^\t*-\s\+/
+syn match taskpaperContext   /\s\zs@[^ \t(]\+\(([^)]*)\)\?/
+syn match taskpaperToday     /@today/
+syn match taskpaperUrgent    /@urgent/
+syn match taskpaperDone      /^.*\s@done\(\(\s\|([^)]*)\).*\)\?$/ contains=taskpaperToday,taskpaperUrgent
+syn match taskpaperCancelled /^.*\s@cancelled\(\(\s\|([^)]*)\).*\)\?$/ contains=taskpaperToday,taskpaperUrgent
 
 syn sync fromstart
 
 "highlighting for Taskpaper groups
-hi def link TaskPaperProject         Keyword
-hi def link TaskPaperListItem        Identifier
-hi def link TaskPaperNote            Comment
-hi def link TaskPaperToday           Todo
-hi def link TaskPaperDone            Comment
+HiLink taskpaperListItem      Identifier
+HiLink taskpaperContext       String
+HiLink taskpaperToday         Search
+HiLink taskpaperUrgent        ErrorMsg
+HiLink taskpaperProject       Title
+HiLink taskpaperDone          Comment
+HiLink taskpaperCancelled     Comment
+HiLink taskpaperComment       Comment
 
 call taskpaper#tag_style_dict(g:task_paper_styles)
 
-let b:current_syntax = 'taskpaper'
+let b:current_syntax = "taskpaper"
 
 delcommand HiLink
-" vim: ts=4
+" vim: ts=8
