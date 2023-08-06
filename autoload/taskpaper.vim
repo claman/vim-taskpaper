@@ -120,10 +120,10 @@ function! taskpaper#complete_project(lead, cmdline, pos)
 
     while lnum <= line('$')
         let line = getline(lnum)
-        let ml = matchlist(line, '\v\C^\t*(.+):(\s+\@[^ \t(]+(\([^)]*\))?)*$')
+        let ml = matchlist(line, '\v\C^ *(.+):(\s+\@[^ \t(]+(\([^)]*\))?)*$')
 
         if !empty(ml)
-            let d = len(matchstr(line, '^\t*'))
+            let d = len(matchstr(line, '^ *'))
 
             while d < depth
                 call remove(stack, -1)
@@ -158,11 +158,11 @@ function! taskpaper#go_to_project()
 endfunction
 
 function! taskpaper#next_project()
-    return search('^\t*\zs.\+:\(\s\+@[^\s(]\+\(([^)]*)\)\?\)*$', 'w')
+    return search('^ *\zs.\+:\(\s\+@[^\s(]\+\(([^)]*)\)\?\)*$', 'w')
 endfunction
 
 function! taskpaper#previous_project()
-    return search('^\t*\zs.\+:\(\s\+@[^\s(]\+\(([^)]*)\)\?\)*$', 'bw')
+    return search('^ *\zs.\+:\(\s\+@[^\s(]\+\(([^)]*)\)\?\)*$', 'bw')
 endfunction
 
 function! s:search_project(project, depth, begin, end)
@@ -202,7 +202,7 @@ function! taskpaper#search_end_of_item(...)
     let lnum = a:0 > 0 ? a:1 : line('.')
     let flags = a:0 > 1 ? a:2 : ''
 
-    let depth = len(matchstr(getline(lnum), '^\t*'))
+    let depth = len(matchstr(getline(lnum), '^ *'))
 
     let end = lnum
     let lnum += 1
@@ -211,7 +211,7 @@ function! taskpaper#search_end_of_item(...)
 
         if line =~ '^\s*$'
             " Do nothing
-        elseif depth < len(matchstr(line, '^\t*'))
+        elseif depth < len(matchstr(line, '^ *'))
             let end = lnum
         else
             break
@@ -242,7 +242,7 @@ function! taskpaper#delete(...)
     let save_fen = &l:foldenable
     setlocal nofoldenable
 
-    let depth = len(matchstr(getline(start), '^\t*'))
+    let depth = len(matchstr(getline(start), '^ *'))
 
     let end = taskpaper#search_end_of_item(start)
     silent execute start . ',' . end . 'delete ' . reg
@@ -275,7 +275,7 @@ function! taskpaper#put(...)
     endif
 
     if indent > 0
-        let project_depth = len(matchstr(getline('.'), '^\t*'))
+        let project_depth = len(matchstr(getline('.'), '^ *'))
         let tabs = repeat("\t", project_depth + indent)
     else
         let tabs = ''
@@ -320,7 +320,7 @@ function! taskpaper#move_to_project()
 endfunction
 
 function! taskpaper#update_project()
-    let indent = matchstr(getline("."), '^\t*')
+    let indent = matchstr(getline("."), '^ *')
     let depth = len(indent)
 
     let projects = []
@@ -336,7 +336,7 @@ function! taskpaper#update_project()
         if project != ""
             call add(projects, project)
 
-            let indent = matchstr(line, '^\t*')
+            let indent = matchstr(line, '^ *')
             let depth = len(indent) - 1
 
             if depth < 0
@@ -417,12 +417,12 @@ function! taskpaper#fold(lnum, pat, ipat)
         return level
     endif
 
-    let depth = len(matchstr(getline(a:lnum), '^\t*'))
+    let depth = len(matchstr(getline(a:lnum), '^ *'))
 
     for lnum in range(a:lnum + 1, line('$'))
         let line = getline(lnum)
 
-        if depth >= len(matchstr(line, '^\t*'))
+        if depth >= len(matchstr(line, '^ *'))
             break
         endif
 
@@ -534,7 +534,7 @@ function! taskpaper#_fold_projects(lnum)
     endif
 
     let line = getline(a:lnum)
-    let depth = len(matchstr(line, '^\t*'))
+    let depth = len(matchstr(line, '^ *'))
     return '>' . (depth + 1)
 endfunction
 
@@ -553,7 +553,7 @@ function! taskpaper#newline()
     endif
 
     let pline = getline(lnum - 1)
-    let depth = len(matchstr(pline, '^\t*'))
+    let depth = len(matchstr(pline, '^ *'))
     call setline(lnum, repeat("\t", depth + 1) . '- ')
 
     return "\<End>"
